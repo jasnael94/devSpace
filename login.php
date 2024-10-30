@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Connexion</title>
+    <title>devSpace-connexion</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
