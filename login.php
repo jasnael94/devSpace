@@ -1,20 +1,20 @@
 <?php
-include 'db.php';
 session_start();
+$pdo = new PDO('mysql:host=localhost;dbname=devSpace', 'username', 'password');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$username]);
+    $stmt = $pdo->prepare("SELECT * FROM Users WHERE email = :email");
+    $stmt->execute([':email' => $email]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password'])) {
+    if ($user && password_verify($password, $user['password_hash'])) {
         $_SESSION['user_id'] = $user['id'];
         header("Location: home.php");
     } else {
-        $error = "Identifiants invalides.";
+        echo "<p>Identifiants invalides.</p>";
     }
 }
 ?>
@@ -23,19 +23,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>devSpace-connexion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <title>Connexion</title>
 </head>
 <body>
-    <div class="form-container">
-        <form method="POST">
-            <h2>Connexion</h2>
-            <?php if (isset($error)) echo "<p>$error</p>"; ?>
-            <input type="text" name="username" required placeholder="Nom d'utilisateur">
-            <input type="password" name="password" required placeholder="Mot de passe">
-            <button type="submit">Se connecter</button>
-        </form>
-        <p>Nouveau ici ? <a href="register.php">Inscrivez-vous</a></p>
-    </div>
+    <h1>Se connecter</h1>
+    <form method="POST">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+        <button type="submit">Se connecter</button>
+    </form>
+    <a href="register.php">Pas encore inscrit ? Inscrivez-vous ici</a>
 </body>
 </html>

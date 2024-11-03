@@ -1,33 +1,30 @@
 <?php
 session_start();
-include 'db.php';
+$pdo = new PDO('mysql:host=localhost;dbname=devSpace', 'username', 'password');
 
+// Vérifie si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
-    exit();
+    exit;
 }
 
-$user_id = $_SESSION['user_id'];
-
-// Ajout d'une publication
-if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['content'])) {
-    $stmt = $pdo->prepare("INSERT INTO posts (user_id, content) VALUES (?, ?)");
-    $stmt->execute([$user_id, $_POST['content']]);
-}
-
-$posts = $pdo->query("SELECT posts.*, users.username FROM posts JOIN users ON posts.user_id = users.id ORDER BY created_at DESC")->fetchAll();
+// Afficher les publications
+$stmt = $pdo->query("SELECT * FROM Posts ORDER BY created_at DESC");
+$posts = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Accueil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <title>Accueil</title>
 </head>
 <body>
     <h1>Accueil</h1>
-    <form method="POST">
+
+    <form method="POST" action="create_post.php">
         <textarea name="content" placeholder="Quoi de neuf ?" required></textarea>
         <button type="submit">Publier</button>
     </form>
@@ -35,8 +32,13 @@ $posts = $pdo->query("SELECT posts.*, users.username FROM posts JOIN users ON po
     <h2>Publications</h2>
     <?php foreach ($posts as $post): ?>
         <div class="post">
-            <p><strong><?php echo htmlspecialchars($post['username']); ?></strong>: <?php echo htmlspecialchars($post['content']); ?></p>
-            <small><?php echo $post['created_at']; ?></small>
+            <p><?php echo htmlspecialchars($post['content']); ?></p>
+            <p class="date">Posté le <?php echo $post['created_at']; ?></p>
+            <form method="POST" action="comment.php">
+                <input type="hidden" name="post_id" value="<?php echo $post['id']; ?>">
+                <textarea name="content" placeholder="Commentaire" required></textarea>
+                <button type="submit">Commenter</button>
+            </form>
         </div>
     <?php endforeach; ?>
 </body>

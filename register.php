@@ -1,13 +1,16 @@
 <?php
-include 'db.php';
+// Connexion à la base de données
+$pdo = new PDO('mysql:host=localhost;dbname=devSpace', 'username', 'password');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    
-    $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    $stmt->execute([$username, $password]);
-    header("Location: login.php");
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+
+    $stmt = $pdo->prepare("INSERT INTO Users (username, email, password_hash) VALUES (:username, :email, :password_hash)");
+    $stmt->execute([':username' => $username, ':email' => $email, ':password_hash' => $password]);
+
+    echo "<p>Inscription réussie !</p>";
 }
 ?>
 
@@ -15,18 +18,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Inscription</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <title>Inscription</title>
 </head>
 <body>
-    <div class="form-container">
-        <form method="POST">
-            <h2>Inscription</h2>
-            <input type="text" name="username" required placeholder="Nom d'utilisateur">
-            <input type="password" name="password" required placeholder="Mot de passe">
-            <button type="submit">S'inscrire</button>
-        </form>
-        <p>Déjà inscrit ? <a href="login.php">Connectez-vous</a></p>
-    </div>
+    <h1>S'inscrire</h1>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+        <button type="submit">S'inscrire</button>
+    </form>
+    <a href="login.php">Déjà inscrit ? Connectez-vous ici</a>
 </body>
 </html>
