@@ -1,6 +1,6 @@
 <?php
 // Connexion à la base de données
-$pdo = new PDO('mysql:host=localhost;dbname=devSpace', 'username', 'password');
+$pdo = new PDO('mysql:host=localhost;dbname=devSpace', 'root', '');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];

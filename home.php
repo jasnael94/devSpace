@@ -1,6 +1,6 @@
 <?php
 session_start();
-$pdo = new PDO('mysql:host=localhost;dbname=devSpace', 'username', 'password');
+$pdo = new PDO('mysql:host=localhost;dbname=devSpace', 'root', '');
 
 // Vérifie si l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
